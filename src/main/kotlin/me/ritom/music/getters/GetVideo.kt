@@ -1,6 +1,5 @@
 package me.ritom.music.getters
 
-import com.google.api.services.youtube.model.SearchResult
 import me.ritom.music.YoutubeBuilder
 import me.ritom.music.models.YoutubeVideo
 import kotlin.streams.toList
@@ -18,7 +17,7 @@ class GetVideo {
         val response = search.execute()
         val results = response.items
         return results.stream().map {
-            YoutubeVideo(it.id.videoId, it.snippet.thumbnails.default)
+            YoutubeVideo(it.snippet.title,it.id.videoId, it.snippet.thumbnails.default)
         }.toList()
     }
 }
