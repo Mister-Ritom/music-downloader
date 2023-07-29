@@ -1,4 +1,4 @@
-package me.ritom.music
+package me.ritom.music.download
 
 import java.io.File
 import java.util.*
@@ -15,7 +15,7 @@ class DownloadVideo {
 
         try {
             val processBuilder = ProcessBuilder("python",
-                "Yt-dlp path",//TODO include yt dlp in the application
+                "/home/ritom/Downloads/yt-dlp",
                 "--extract-audio", // Extract audio only
                 "--audio-format", "mp3",
                 videoUrl)

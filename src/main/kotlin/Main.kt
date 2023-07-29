@@ -1,5 +1,6 @@
-import me.ritom.music.DownloadVideo
-import me.ritom.music.GetVideo
+import me.ritom.music.download.DownloadVideo
+import me.ritom.music.getters.GetPlaylist
+import me.ritom.music.getters.GetVideo
 import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
@@ -16,20 +17,31 @@ fun main(args: Array<String>) {
         println("Use --name to search for songs ")
         exitProcess(1)
     }
-    println("Searching for musics of $title")
+    val playList = arguments.contains("--playlist")
+    if (playList) println("Downloading all musics of $title")
+    else println("Searching for musics of $title")
     var downloadAll = false
     if (arguments.contains("--downloadall"))downloadAll=true
     val down = DownloadVideo()
-    val getVideo = GetVideo()
-    val videos = getVideo.getVideos(title)
-    if(downloadAll) {
-        println("Downloading all matching musics with $title")
+    if (playList) {
+        val getPlaylist = GetPlaylist()
+        val videos = getPlaylist.getVideosFromPlayList(title)
         for (video in videos) {
             down.downloadVideo(video.id)
         }
     }
     else {
-        println("Downloading $title")
-        down.downloadVideo(videos[0].id)
+        val getVideo = GetVideo()
+        val videos = getVideo.getVideos(title)
+        if(downloadAll) {
+            println("Downloading all matching musics with $title")
+            for (video in videos) {
+                down.downloadVideo(video.id)
+            }
+        }
+        else {
+            println("Downloading $title")
+            down.downloadVideo(videos[0].id)
+        }
     }
 }

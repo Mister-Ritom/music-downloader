@@ -1,4 +1,4 @@
-package me.ritom.music;
+package me.ritom.music.models;
 
 import com.google.api.services.youtube.model.Thumbnail
 

@@ -53,6 +53,10 @@ class YoutubeBuilder {
         return null
     }
 
+    fun getApiKey():String {
+        return "API_KEY"
+    }
+
     @Throws(GeneralSecurityException::class, IOException::class)
     fun getService(): YouTube {
         val httpTransport = GoogleNetHttpTransport.newTrustedTransport()
