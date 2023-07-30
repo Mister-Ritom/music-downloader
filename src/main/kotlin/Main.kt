@@ -1,13 +1,17 @@
-import me.ritom.music.download.YoutubeDownloader
+import me.ritom.downloader.YoutubeDownloader
+import me.ritom.downloader.YtDlpDownloader
 import me.ritom.music.getters.GetVideo
+import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.util.*
 import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
     val arguments = args.toList()
     var title:String?=null
-    var outputDirectory:String? = null
+    var outputDirectory:String=getDefaultDownloads()
+    var ytDlp: File? = null
     println("Running with args ${args.joinToString()}")
     for (s in arguments) {
         if (s.startsWith("--name=")) {
@@ -16,9 +20,13 @@ fun main(args: Array<String>) {
         if (s.startsWith("--o=")) {
             outputDirectory=s.split("=")[1]
         }
+        if (s.startsWith("--ytdlp=")) {
+            ytDlp=File(s.split("=")[1])
+        }
     }
-    if (outputDirectory!=null&&Files.isRegularFile(Paths.get(outputDirectory))){
-        outputDirectory=null
+    if (Files.isRegularFile(Paths.get(outputDirectory))){
+        println("Detected file path as $outputDirectory using default directory instead")
+        outputDirectory=getDefaultDownloads()
     }
     if (title==null) {
         println("Use --name to search for songs ")
@@ -29,12 +37,12 @@ fun main(args: Array<String>) {
     else println("Searching for musics of $title")
     var downloadAll = false
     if (arguments.contains("--downloadall"))downloadAll=true
-    val down = YoutubeDownloader()
+    if (ytDlp==null||ytDlp.isDirectory) {
+        ytDlp=YtDlpDownloader().downloadYtDlp("$outputDirectory/ytdlp")
+    }
+    val down = YoutubeDownloader(ytDlp,outputDirectory)
     if (playList) {
-        if (outputDirectory!=null) {
-            down.downloadPlaylist(title,outputDirectory)
-        }
-        else down.downloadPlaylist(title)
+        down.downloadPlaylist(title)
     }
     else {
         val getVideo = GetVideo()
@@ -42,18 +50,29 @@ fun main(args: Array<String>) {
         if(downloadAll) {
             println("Downloading all matching musics with $title")
             for (video in videos) {
-                if (outputDirectory!=null) {
-                    down.downloadPlaylist(title,outputDirectory)
-                }
-                else down.downloadVideo(video)
+                down.downloadSingle(title)
             }
         }
         else {
             println("Downloading $title")
-            if (outputDirectory!=null) {
-                down.downloadPlaylist(title,outputDirectory)
-            }
-            else down.downloadVideo(videos[0])
+            down.downloadSingle(title)
+        }
+    }
+}
+private fun getDefaultDownloads(): String {
+    val os = System.getProperty("os.name").lowercase(Locale.getDefault())
+
+    return when {
+        os.contains("win") -> {
+            val userProfile = System.getenv("USERPROFILE") ?: ""
+            "$userProfile\\Music"
+        }
+        os.contains("mac") || os.contains("nix") || os.contains("nux") -> {
+            val userHome = System.getProperty("user.home") ?: ""
+            "$userHome/Music"
+        }
+        else -> {
+            "Music/"
         }
     }
 }

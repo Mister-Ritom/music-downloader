@@ -54,7 +54,7 @@ class YoutubeBuilder {
     }
 
     fun getApiKey():String {
-        return "API_KEY"
+        return "AIzaSyDdGaDLHpciI9qUpTENtfA9F_TEsD2lsUk"
     }
 
     @Throws(GeneralSecurityException::class, IOException::class)
