@@ -3,17 +3,15 @@ plugins {
     application
 }
 
-group = "me.ritom"
-version = "1.0-SNAPSHOT"
-
 repositories {
-    mavenCentral()
-}
-
-tasks.withType<Jar> {
-    manifest {
-        attributes["Main-Class"] = "MainKt"
+    maven {
+        url = uri("https://maven.pkg.github.com/RitomG69/youtube-downloader")
+        credentials {
+            username = "RitomG69"
+            password = "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"
+        }
     }
+    mavenCentral()
 }
 
 dependencies {
@@ -22,7 +20,7 @@ dependencies {
     implementation("com.google.oauth-client:google-oauth-client-jetty:1.23.0")
     implementation("com.google.apis:google-api-services-youtube:v3-rev222-1.25.0")
     implementation("com.squareup.okhttp3:okhttp:4.9.1")
-    implementation(files("libs/Youtube-Downloader.jar"))
+    implementation("site.ritom:youtubedownloader:1.0")
 
 }
 
